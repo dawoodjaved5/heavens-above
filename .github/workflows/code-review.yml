@@ -1,0 +1,43 @@
+name: Code Review
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Super-Linter
+        uses: super-linter/super-linter@v6
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_JAVASCRIPT_ES: true
+          VALIDATE_HTML: true
+          VALIDATE_CSS: true
+          FILTER_REGEX_EXCLUDE: "^node_modules/|^heavens-above/public/data/"
+
+  codeql:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3

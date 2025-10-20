@@ -1,0 +1,38 @@
+name: Documentation Deployment
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.10
+
+      - name: Install MkDocs
+        run: pip install mkdocs mkdocs-material
+
+      - name: Build Documentation
+        run: |
+          if mkdocs build; then
+            echo "✅ Documentation build successful."
+          else
+            echo "❌ Documentation build failed."
+            exit 1
+          fi
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site

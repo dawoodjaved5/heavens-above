@@ -1,0 +1,24 @@
+name: Release Notes Generator
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate Release Notes
+        run: |
+          echo "Release generated at $(date)" > release-notes.txt
+          echo "✅ Release notes generated successfully."
+
+      - name: Upload Notes
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes
+          path: release-notes.txt
