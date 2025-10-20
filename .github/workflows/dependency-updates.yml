@@ -6,14 +6,28 @@ on:
   workflow_dispatch:
 
 jobs:
-  dependabot:
+  dependabot-auto-merge:
+    if: ${{ github.actor == 'dependabot[bot]' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
-      - name: Dependabot Metadata
-        uses: dependabot/fetch-metadata@v2
+      - name: Dependabot metadata
         id: metadata
+        uses: dependabot/fetch-metadata@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Report
-        run: echo "✅ Dependabot metadata fetched successfully."
+      - name: Auto-approve and merge minor/patch
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          UPDATE_TYPE: ${{ steps.metadata.outputs.update-type }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Update type: $UPDATE_TYPE"
+          if [[ "$UPDATE_TYPE" == "version-update:semver-minor" || "$UPDATE_TYPE" == "version-update:semver-patch" ]]; then
+            gh pr review "$PR_URL" --approve
+            gh pr merge --auto --squash "$PR_URL"
+          else
+            echo "Non-minor update; skipping auto-merge."
+          fi
