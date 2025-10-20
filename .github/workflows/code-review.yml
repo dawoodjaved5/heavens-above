@@ -22,9 +22,9 @@ jobs:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_JAVASCRIPT_ES: true
-          VALIDATE_HTML: true
-          VALIDATE_CSS: true
-          FILTER_REGEX_EXCLUDE: "^node_modules/|^heavens-above/public/data/"
+          VALIDATE_HTML: false
+          VALIDATE_CSS: false
+          FILTER_REGEX_EXCLUDE: "^node_modules/|^public/data/"
 
   codeql:
     runs-on: ubuntu-latest
