@@ -38,4 +38,4 @@ jobs:
 
       - name: Basic runtime check
         run: |
-          node heavens-above/run.js || true
+          node run.js || true

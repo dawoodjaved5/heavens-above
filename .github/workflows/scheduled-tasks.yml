@@ -16,7 +16,7 @@ jobs:
         run: |
           echo "Starting maintenance..."
           echo "Backup at $(date)" > backup.txt
-          du -sh heavens-above/public || true
+          du -sh public || true
           echo "✅ Maintenance task completed successfully."
 
       - name: Upload Backup Log
