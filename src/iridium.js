@@ -1,4 +1,4 @@
-const request = require("request");
+const axios = require("axios");
 const cheerio = require("cheerio");
 const fs = require("fs");
 const utils = require("./utils");
@@ -20,9 +20,8 @@ function getTable(config) {
 	} else {
 		options = utils.post_options("IridiumFlares.aspx?", opt);
 	}
-	request(options, (error, response, body) => {
-		if (error || response.statusCode !== 200) return;
-		const $ = cheerio.load(body, {
+	axios(options).then(response => {
+		const $ = cheerio.load(response.data, {
 			decodeEntities: false
 		});
 		let next = "__EVENTTARGET=&__EVENTARGUMENT=&__LASTFOCUS=";
@@ -38,13 +37,9 @@ function getTable(config) {
 		});
 		function factory(temp) {
 			return new Promise((resolve, reject) => {
-				request(utils.iridium_options(temp["url"]), (error, response, body) => {
-					if (error || response.statusCode !== 200) { //在无SessionID时返回500
-						reject(error);
-						return;
-					}
+				axios(utils.iridium_options(temp["url"])).then(response => {
 					console.log("Success", temp);
-					const $ = cheerio.load(body, {
+					const $ = cheerio.load(response.data, {
 						decodeEntities: false
 					});
 					const table = $("form").find("table.standardTable"), tr = table.find("tbody tr");
@@ -65,12 +60,24 @@ function getTable(config) {
 					fs.appendFile(basedir + id + ".html", table.html(), (err) => {
 						if (err) console.log(err);
 					}); //保存表格
-					request.get(utils.image_options(temp[eventsIridium[13]])).pipe(fs.createWriteStream(basedir + id + ".png", {
-						"flags": "a"
-					})).on("error", (err) => {
-						console.error(err);
-					}); //下载图片
+					
+					// Download image using axios
+					axios({
+						...utils.image_options(temp[eventsIridium[13]]),
+						responseType: 'stream'
+					}).then(imageResponse => {
+						imageResponse.data.pipe(fs.createWriteStream(basedir + id + ".png", {
+							"flags": "a"
+						})).on("error", (err) => {
+							console.error(err);
+						});
+					}).catch(err => {
+						console.error("Image download error:", err);
+					});
+					
 					resolve(temp);
+				}).catch(error => {
+					reject(error);
 				});
 			});
 		}
@@ -97,6 +104,8 @@ function getTable(config) {
 					if (err) console.log(err);
 				});
 			}
+		}).catch(error => {
+			console.error("Request error:", error);
 		});
 	});
 }
