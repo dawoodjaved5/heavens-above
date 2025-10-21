@@ -1,26 +1,41 @@
-name: Scheduled Maintenance
+name: Scheduled Data Updates
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # daily midnight UTC
+    - cron: '0 6 * * *'  # daily at 6 AM UTC
   workflow_dispatch:
 
 jobs:
-  maintenance:
+  update-data:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Maintenance Script
-        run: |
-          echo "Starting maintenance..."
-          echo "Backup at $(date)" > backup.txt
-          du -sh public || true
-          echo "✅ Maintenance task completed successfully."
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
-      - name: Upload Backup Log
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run data scraping
+        run: |
+          echo "Starting data update at $(date)"
+          node run.js
+          echo "✅ Data update completed successfully"
+
+      - name: Commit and push updated data
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add public/data/
+          git diff --staged --quiet || git commit -m "Update satellite data - $(date)"
+          git push
+
+      - name: Upload backup log
         uses: actions/upload-artifact@v4
         with:
-          name: daily-backup
-          path: backup.txt
+          name: data-update-$(date +%Y%m%d)
+          path: public/data/

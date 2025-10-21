@@ -20,6 +20,28 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run data scraping scripts
+        run: |
+          echo "Running satellite data scraping..."
+          node run.js
+          echo "✅ Data scraping completed"
+
+      - name: Verify data files
+        run: |
+          echo "Checking for generated data files..."
+          ls -la public/data/satellite25544/ | grep index.json || echo "No satellite index.json found"
+          ls -la public/data/IridiumFlares/ | grep index.json || echo "No iridium index.json found"
+          echo "✅ Data verification completed"
+
       - name: Upload static site artifact
         uses: actions/upload-pages-artifact@v3
         with:

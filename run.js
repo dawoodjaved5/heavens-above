@@ -12,6 +12,8 @@ satellite.getTable({
 	pages: 4,
 	root: "./public/data/"
 }); //ISS
+
+// Iridium flares temporarily disabled due to 404 error
 /*
 iridium.getTable({
 	pages: 4,
