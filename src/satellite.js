@@ -24,21 +24,20 @@ const compare = [
 const weight = [9.5, 6, 6.5, 6.5];
 
 function getTable(config) {
-	return new Promise((resolve, reject) => {
-		let database = config.database || [];
-		let counter = config.counter || 0;
-		const opt = config.opt || 0;
-		const basedir = `${config.root}satellite${config.target}/`;
-		if (counter === 0) {
-			options = utils.get_options(`PassSummary.aspx?satid=${config.target}&`);
-			if (!fs.existsSync(basedir)) {
-				fs.mkdir(basedir, (err) => {
-					if (err) console.log(err);
-				});
-			}
-		} else {
-			options = utils.post_options(`PassSummary.aspx?satid=${config.target}&`, opt);
+	let database = config.database || [];
+	let counter = config.counter || 0;
+	const opt = config.opt || 0;
+	const basedir = `${config.root}satellite${config.target}/`;
+	if (counter === 0) {
+		options = utils.get_options(`PassSummary.aspx?satid=${config.target}&`);
+		if (!fs.existsSync(basedir)) {
+			fs.mkdir(basedir, (err) => {
+				if (err) console.log(err);
+			});
 		}
+	} else {
+		options = utils.post_options(`PassSummary.aspx?satid=${config.target}&`, opt);
+	}
 	axios(options).then(response => {
 		const $ = cheerio.load(response.data, {
 			decodeEntities: false
@@ -172,18 +171,11 @@ function getTable(config) {
 					return a[property[8]] <= b[property[8]] ? 1 : -1; //分数
 				});
 				fs.appendFile(basedir + "index.json", JSON.stringify(database), (err) => {
-					if (err) {
-						console.log(err);
-						reject(err);
-					} else {
-						console.log("✅ Data written to index.json successfully");
-						resolve(database);
-					}
+					if (err) console.log(err);
 				});
 			}
 		}).catch(error => {
 			console.error("Request error:", error);
-			reject(error);
 		});
 	});
 }
