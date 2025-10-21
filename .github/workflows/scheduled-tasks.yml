@@ -34,22 +34,8 @@ jobs:
       - name: Run data scraping
         run: |
           echo "Starting data update at $(date)"
-          echo "Current directory: $(pwd)"
-          echo "Contents before scraping:"
-          ls -la public/data/ || echo "No data directory found"
-          
-          # Run the scraping script with error handling
-          if node run.js; then
-            echo "✅ Data scraping completed successfully"
-            echo "Contents after scraping:"
-            ls -la public/data/ || echo "Still no data directory"
-            ls -la public/data/satellite25544/ || echo "No satellite data directory"
-            echo "Index.json size:"
-            ls -lh public/data/satellite25544/index.json || echo "No index.json found"
-          else
-            echo "❌ Data scraping failed"
-            exit 1
-          fi
+          node run.js
+          echo "✅ Data update completed successfully"
 
       - name: Commit and push updated data
         run: |
@@ -64,4 +50,3 @@ jobs:
         with:
           name: data-update-$(date +%Y%m%d)
           path: public/data/
-          if-no-files-found: warn
