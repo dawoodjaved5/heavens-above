@@ -1,45 +1,45 @@
-name: Automated PR Trigger
+# name: Automated PR Trigger
 
-on:
-  schedule:
-    - cron: '*/2 * * * *'  # every 2 minutes
-  workflow_dispatch:
+# on:
+#   schedule:
+#     - cron: '*/2 * * * *'  # every 2 minutes
+#   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
+# permissions:
+#   contents: write
+#   pull-requests: write
 
-jobs:
-  open-pr:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+# jobs:
+#   open-pr:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
 
-      - name: Create trivial change to trigger PR
-        run: |
-          BRANCH="auto/pr-trigger"
-          git config user.name "github-actions"
-          git config user.email "action@github.com"
-          git checkout -B "$BRANCH"
-          mkdir -p .github
-          date +%s > .github/auto-pr-tick.txt
-          git add .github/auto-pr-tick.txt
-          git commit -m "chore: automated PR tick"
-          git push -f origin "$BRANCH"
+#       - name: Create trivial change to trigger PR
+#         run: |
+#           BRANCH="auto/pr-trigger"
+#           git config user.name "github-actions"
+#           git config user.email "action@github.com"
+#           git checkout -B "$BRANCH"
+#           mkdir -p .github
+#           date +%s > .github/auto-pr-tick.txt
+#           git add .github/auto-pr-tick.txt
+#           git commit -m "chore: automated PR tick"
+#           git push -f origin "$BRANCH"
 
-      - name: Open or update pull request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: auto/pr-trigger
-          base: main
-          title: "Automated PR to trigger code review checks"
-          body: "This PR is opened by GitHub Actions to trigger code review workflows."
-          commit-message: "chore: automated PR tick"
-          author: "github-actions <action@github.com>"
-          labels: automated
+#       - name: Open or update pull request
+#         uses: peter-evans/create-pull-request@v5
+#         with:
+#           token: ${{ secrets.GITHUB_TOKEN }}
+#           branch: auto/pr-trigger
+#           base: main
+#           title: "Automated PR to trigger code review checks"
+#           body: "This PR is opened by GitHub Actions to trigger code review workflows."
+#           commit-message: "chore: automated PR tick"
+#           author: "github-actions <action@github.com>"
+#           labels: automated
 
 

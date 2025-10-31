@@ -8,7 +8,7 @@ on:
     types: [created]
   workflow_dispatch:
   schedule:
-    - cron: '*/2 * * * *'  # every 2 minutes
+    - cron: '0 19 * * *'  # daily at 00:00 PKT (UTC+5)
 
 jobs:
   generate:
