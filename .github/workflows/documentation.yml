@@ -3,8 +3,9 @@ name: Documentation Deployment
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
 
 jobs:
   docs:
