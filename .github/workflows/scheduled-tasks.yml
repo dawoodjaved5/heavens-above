@@ -5,12 +5,17 @@ on:
     - cron: '0 6 * * *'  # daily at 6 AM UTC
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   update-data:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -44,6 +49,14 @@ jobs:
           git add public/data/
           git diff --staged --quiet || git commit -m "Update satellite data - $(date)"
           git push
+
+      - name: Trigger Vercel deploy (optional)
+        if: ${{ success() && env.VERCEL_DEPLOY_HOOK_URL != '' }}
+        env:
+          VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          echo "Triggering Vercel deploy via hook..."
+          curl -X POST -sS "$VERCEL_DEPLOY_HOOK_URL" || true
 
       - name: Upload backup log
         uses: actions/upload-artifact@v4
