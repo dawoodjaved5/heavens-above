@@ -63,6 +63,12 @@ jobs:
           echo "Triggering Vercel deploy via hook..."
           curl -X POST -sS "$VERCEL_DEPLOY_HOOK_URL"
 
+      - name: Write job summary
+        run: |
+          echo "## Data update summary" >> $GITHUB_STEP_SUMMARY
+          echo "- Run time (UTC): $(date -u)" >> $GITHUB_STEP_SUMMARY
+          echo "- Workflow: Scheduled Data Updates" >> $GITHUB_STEP_SUMMARY
+
       - name: Upload backup log
         uses: actions/upload-artifact@v4
         with:

@@ -20,6 +20,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Show tool versions
         run: |
@@ -32,6 +33,26 @@ jobs:
             npm ci
           else
             npm install
+          fi
+
+      - name: Run lint
+        run: |
+          if npm run | grep -q "^  lint"; then
+            echo "Running lint..."
+            npm run lint
+            echo "✅ Lint completed successfully"
+          else
+            echo "No 'lint' script found in package.json. Skipping lint step."
+          fi
+
+      - name: Run tests
+        run: |
+          if npm run | grep -q "^  test"; then
+            echo "Running tests..."
+            npm test
+            echo "✅ Tests completed successfully"
+          else
+            echo "No 'test' script found in package.json. Skipping test step."
           fi
 
       - name: Run security audit
@@ -51,6 +72,12 @@ jobs:
           find ./public -name "*.css" -exec echo "Found CSS file: {}" \;
           echo "✅ CSS files found"
 
-      - name: Basic runtime check
+      - name: Basic runtime check (optional)
         run: |
-          node run.js || true
+          if [ -f run.js ]; then
+            echo "Running optional runtime check..."
+            node run.js
+            echo "✅ Runtime check completed successfully"
+          else
+            echo "No run.js found. Skipping runtime check."
+          fi

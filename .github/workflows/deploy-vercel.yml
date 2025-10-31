@@ -25,6 +25,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Show tool versions
         run: |
@@ -38,6 +39,26 @@ jobs:
             npm ci
           else
             npm install
+          fi
+
+      - name: Run lint
+        run: |
+          if npm run | grep -q "^  lint"; then
+            echo "Running lint..."
+            npm run lint
+            echo "✅ Lint completed successfully"
+          else
+            echo "No 'lint' script found in package.json. Skipping lint step."
+          fi
+
+      - name: Run tests
+        run: |
+          if npm run | grep -q "^  test"; then
+            echo "Running tests..."
+            npm test
+            echo "✅ Tests completed successfully"
+          else
+            echo "No 'test' script found in package.json. Skipping test step."
           fi
 
       - name: Build data (generate public/)
@@ -56,16 +77,40 @@ jobs:
           # Uses .vercel/project.json committed by `vercel link`
           vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
 
-      - name: Build Vercel project
+      - name: Build Vercel project (production)
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
           vercel build --prod --token "$VERCEL_TOKEN"
 
-      - name: Deploy to Vercel
+      - name: Deploy to Vercel (production)
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "VERCEL_TOKEN not set; skipping production deploy."
+            exit 0
+          fi
           vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN"
+
+      - name: Build Vercel project (preview)
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          vercel build --token "$VERCEL_TOKEN"
+
+      - name: Deploy to Vercel (preview)
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "VERCEL_TOKEN not set; skipping preview deploy."
+            exit 0
+          fi
+          vercel deploy --prebuilt --token "$VERCEL_TOKEN"
 
 

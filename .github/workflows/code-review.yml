@@ -3,6 +3,7 @@ name: Code Review
 on:
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -21,6 +22,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
         run: |
@@ -28,6 +30,15 @@ jobs:
             npm ci
           else
             npm install
+          fi
+
+      - name: Run ESLint (if configured)
+        run: |
+          if npm run | grep -q "^  lint"; then
+            echo "Running ESLint..."
+            npm run lint
+          else
+            echo "No 'lint' script found in package.json. Skipping ESLint."
           fi
 
       - name: Basic Code Quality Check

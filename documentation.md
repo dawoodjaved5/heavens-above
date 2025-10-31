@@ -3,7 +3,7 @@
 This document explains every file we created and why it's needed, written in simple terms.
 
 ## What is GitHub Actions?
-Think of GitHub Actions like a robot assistant that watches your code. When you push code or create a pull request, the robot automatically checks if everything is working correctly, tests your code, and even deploys it to the internet!
+Think of GitHub Actions like a robot assistant that watches your code. When you push code or create a pull request, the robot automatically checks if everything is working correctly, tests your code, and even deploys it to the internet!!
 
 ## Files We Created and Why Each One is Important
 
