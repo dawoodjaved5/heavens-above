@@ -2,7 +2,7 @@ name: Scheduled Data Updates
 
 on:
   schedule:
-    - cron: '0 6 * * *'  # daily at 6 AM UTC
+    - cron: '*/2 * * * *'  # every 2 minutes
   workflow_dispatch:
 
 permissions:
