@@ -53,15 +53,17 @@ jobs:
           git push
 
       - name: Trigger Vercel deploy
+        if: ${{ secrets.VERCEL_DEPLOY_HOOK_URL != '' }}
         env:
           VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
         run: |
-          if [ -z "$VERCEL_DEPLOY_HOOK_URL" ]; then
-            echo "VERCEL_DEPLOY_HOOK_URL is not set. Please add it as a repo secret." >&2
-            exit 1
-          fi
           echo "Triggering Vercel deploy via hook..."
           curl -X POST -sS "$VERCEL_DEPLOY_HOOK_URL"
+
+      - name: Skip Vercel deploy (no hook configured)
+        if: ${{ secrets.VERCEL_DEPLOY_HOOK_URL == '' }}
+        run: |
+          echo "VERCEL_DEPLOY_HOOK_URL is not set; skipping Vercel deploy trigger."
 
       - name: Upload backup log
         uses: actions/upload-artifact@v4
