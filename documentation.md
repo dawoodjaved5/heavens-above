@@ -14,7 +14,7 @@ Think of GitHub Actions like a robot assistant that watches your code. When you 
 - When you push code to GitHub, this robot automatically runs
 - It checks if your JavaScript, HTML, and CSS code follows good rules (like proper spelling and grammar)
 - It makes sure your code actually runs without crashing
-- If something is wrong, it tells you exactly what to fix
+- If something is wrong, it tells you exactly what to fixx
 
 **How it works:**
 - Triggers: Runs every time you push code or create a pull request
