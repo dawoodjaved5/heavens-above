@@ -42,7 +42,7 @@ jobs:
         run: |
           echo "Starting data update at $(date)"
           node run.js
-          echo "✅ Data update completed successfully"
+          echo "Data update completed successfully"
 
       - name: Commit and push updated data
         run: |

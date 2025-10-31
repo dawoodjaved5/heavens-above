@@ -20,7 +20,7 @@ jobs:
       - name: Generate Release Notes
         run: |
           echo "Release generated at $(date)" > release-notes.txt
-          echo "✅ Release notes generated successfully."
+          echo "Release notes generated successfully."
 
       - name: Upload Notes
         uses: actions/upload-artifact@v4

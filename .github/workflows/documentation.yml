@@ -27,12 +27,12 @@ jobs:
       - name: Verify MkDocs Installation
         run: |
           mkdocs --version
-          echo "✅ MkDocs installed successfully"
+          echo "MkDocs installed successfully"
 
       - name: Build Documentation
         run: |
           mkdocs build --verbose
-          echo "✅ Documentation build successful."
+          echo "Documentation build successful."
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4

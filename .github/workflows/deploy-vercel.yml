@@ -45,7 +45,7 @@ jobs:
           if npm run | grep -q "^  lint"; then
             echo "Running lint..."
             npm run lint
-            echo "✅ Lint completed successfully"
+            echo "Lint completed successfully"
           else
             echo "No 'lint' script found in package.json. Skipping lint step."
           fi
@@ -55,7 +55,7 @@ jobs:
           if npm run | grep -q "^  test"; then
             echo "Running tests..."
             npm test
-            echo "✅ Tests completed successfully"
+            echo "Tests completed successfully"
           else
             echo "No 'test' script found in package.json. Skipping test step."
           fi
@@ -64,7 +64,7 @@ jobs:
         run: |
           echo "Running satellite data scraping..."
           npm run build
-          echo "✅ Data build completed"
+          echo "Data build completed"
 
       - name: Install Vercel CLI
         run: npm i -g vercel@latest
