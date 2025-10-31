@@ -2,7 +2,7 @@ name: Dependency Updates
 
 on:
   schedule:
-    - cron: '*/2 * * * *'  # every 2 minutes
+    - cron: '0 * * * *'  # every hour
   workflow_dispatch:
   pull_request:
     branches: [ "main" ]
