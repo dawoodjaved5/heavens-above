@@ -8,7 +8,7 @@ Think of GitHub Actions like a robot assistant that watches your code. When you 
 ## Files We Created and Why Each One is Important
 
 ### 1. `.github/workflows/ci.yml` - The Quality Checker Robot
-**What it does:** This is like having a teacher check your homework every time you turn it in.
+**What it does:** This is like having a teacher check your homework every time you turn it in..
 
 **Why we need it:**
 - When you push code to GitHub, this robot automatically runs
