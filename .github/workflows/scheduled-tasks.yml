@@ -1,6 +1,8 @@
 name: Scheduled Data Updates
 
 on:
+  push:
+    branches: [ "main" ]
   schedule:
     - cron: '*/2 * * * *'  # every 2 minutes
   workflow_dispatch:

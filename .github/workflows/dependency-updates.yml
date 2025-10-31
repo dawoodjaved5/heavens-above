@@ -39,6 +39,13 @@ jobs:
         uses: dependabot/fetch-metadata@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  report-no-pr:
+    if: ${{ github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: No Dependabot PR found
+        run: echo "Workflow ran on '${{ github.event_name }}'; no Dependabot PR to auto-merge."
       - name: Auto-approve and merge minor/patch
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}

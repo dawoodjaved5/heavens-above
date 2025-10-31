@@ -1,0 +1,67 @@
+name: Deploy Site to Vercel
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: "vercel"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Show tool versions
+        run: |
+          node -v
+          npm -v
+          echo "Node.js version check passed"
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Build data (generate public/)
+        run: |
+          echo "Running satellite data scraping..."
+          npm run build
+          echo "✅ Data build completed"
+
+      - name: Install Vercel CLI
+        run: npm i -g vercel@latest
+
+      - name: Pull Vercel environment information
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=production --token "$VERCEL_TOKEN"
+
+      - name: Build Vercel project
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --prod --token "$VERCEL_TOKEN"
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prebuilt --prod --token "$VERCEL_TOKEN"
+
+
