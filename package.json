@@ -5,6 +5,7 @@
   "description": "Scripts for scraping the Heavens Above website.",
   "main": "run.js",
   "scripts": {
+    "build": "node run.js",
     "start": "node run.js",
     "test": "node -c run.js && node -c src/satellite.js && node -c src/iridium.js && node -c src/utils.js",
     "audit": "npm audit --audit-level=moderate"
